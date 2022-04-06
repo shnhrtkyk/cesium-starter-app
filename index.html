@@ -1,17 +1,70 @@
-<!DOCTYPE html>
-<html lang="en">
+<html lang=ja>
 <head>
-  <title>Cesium Starter App</title>
-  <script src="ThirdParty/Cesium/Cesium.js"></script>
-  <style>
-      @import url(ThirdParty/Cesium/Widgets/widgets.css);
-      html, body, #cesiumContainer {
-          width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
-      }
-  </style>
+  <meta charset="UTF-8">
+  <title>PLATEAU-3DTiles、PLATEAU-Ortho、PLATEAU-TerrainをCesiumで表示</title>
+  <!-- Include the CesiumJS JavaScript and CSS files -->
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.90/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.90/Build/Cesium/Widgets/widgets.css" rel="stylesheet"></head>
+</head>
+<style>
+  #cesiumContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+    font-family: sans-serif;
+  }
+  html {
+    height: 100%;
+  }
+  body {
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    height: 100%;
+  }
+</style>
 </head>
 <body>
   <div id="cesiumContainer"></div>
-  <script src="Source/App.js"></script>
+  <script>
+    // Cesium Ionの読み込み指定
+    Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5N2UyMjcwOS00MDY1LTQxYjEtYjZjMy00YTU0ZTg5MmViYWQiLCJpZCI6ODAzMDYsImlhdCI6MTY0Mjc0ODI2MX0.dkwAL1CcljUV7NA7fDbhXXnmyZQU_c-G5zRx8PtEcxE";
+    // Terrainの指定（EGM96、国土数値情報5m標高から生成した全国の地形モデル、5m標高データが無い場所は10m標高で補完している）
+    var viewer = new Cesium.Viewer("cesiumContainer", {
+      terrainProvider: new Cesium.CesiumTerrainProvider({
+        url: Cesium.IonResource.fromAssetId(770371)
+      })
+    });
+    
+    // PLATEAU-Orthoの参照
+    var imageProvider = new Cesium.UrlTemplateImageryProvider({ url: 'https://gic-plateau.s3.ap-northeast-1.amazonaws.com/2020/ortho/tiles/{z}/{x}/{y}.png', maximumLevel : 19});
+    var current_image = viewer.scene.imageryLayers.addImageryProvider(imageProvider); 
+    
+   // 東京都千代田区の建物データ（3D Tiles）
+    var your_3d_tiles = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
+      url : 'https://plateau.geospatial.jp/main/data/3d-tiles/bldg/09201_utsunomiya/texture/tileset.json'
+    }));
+    // 鬼怒川（3D Tiles）ｖ鬼怒川L2（想定最大規模）（水面表ｖ利根川水系鬼怒川洪水浸水想定区域（宇都宮市　
+       var kinu_l1_max_3d_tiles = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
+      url : 'https://plateau.geospatial.jp/main/data/3d-tiles/fld/09201_utsunomiya/texture/kinugawa_l2/tileset.json'
+    }));   
+    // 田川（3D Tiles）　田川浸水リスクL2（想定最大規模）（水面表現）　利根川水系田川洪水浸水想定区域（宇都宮市）
+       var tagawa_l1_max_3d_tiles = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
+      url : 'https://plateau.geospatial.jp/main/data/3d-tiles/fld/09201_utsunomiya/texture_pref/tagawa_l2/tileset.json'
+    }));
+    // 姿川（3D Tiles）姿川L2（想定最大規模）（水面表現　利根川水系姿川洪水浸水想定区域（宇都宮市）
+     var sugata_l1_max_3d_tiles = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
+      url : 'https://plateau.geospatial.jp/main/data/3d-tiles/fld/09201_utsunomiya/texture_pref/sugatagawa_l2/tileset.json'
+    }));   
+    // カメラの初期位置の指定 宇都宮駅を中心に
+    viewer.camera.setView({
+      destination : Cesium.Cartesian3.fromDegrees(139.8984874, 36.5594802, 2000.0)　// 
+    });
+  </script>
 </body>
 </html>
