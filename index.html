@@ -40,7 +40,10 @@
         url: Cesium.IonResource.fromAssetId(770371)
       })
     });
-    
+    var hakone = 'data/092011_evacuation_space.geojson';
+    var promise = Cesium.GeoJsonDataSource.load(hakone, {fill: new Cesium.Color(0, 0, 1, 0.9)});
+    var hinanjyo = viewer.dataSources.add(promise);
+
     // PLATEAU-Orthoの参照
     var imageProvider = new Cesium.UrlTemplateImageryProvider({ url: 'https://gic-plateau.s3.ap-northeast-1.amazonaws.com/2020/ortho/tiles/{z}/{x}/{y}.png', maximumLevel : 19});
     var current_image = viewer.scene.imageryLayers.addImageryProvider(imageProvider); 
@@ -65,6 +68,8 @@
     viewer.camera.setView({
       destination : Cesium.Cartesian3.fromDegrees(139.8984874, 36.5594802, 2000.0)　// 
     });
+    // 避難所
+
   </script>
 </body>
 </html>
