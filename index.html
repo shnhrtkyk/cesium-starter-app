@@ -1,7 +1,7 @@
 <html lang=ja>
 <head>
   <meta charset="UTF-8">
-  <title>PLATEAU-3DTiles、PLATEAU-Ortho、PLATEAU-TerrainをCesiumで表示</title>
+  <title>宇都宮市洪水浸水想定3D可視化</title>
   <!-- Include the CesiumJS JavaScript and CSS files -->
   <script src="https://cesium.com/downloads/cesiumjs/releases/1.90/Build/Cesium/Cesium.js"></script>
   <link href="https://cesium.com/downloads/cesiumjs/releases/1.90/Build/Cesium/Widgets/widgets.css" rel="stylesheet"></head>
@@ -40,9 +40,7 @@
         url: Cesium.IonResource.fromAssetId(770371)
       })
     });
-    var hakone = 'data/092011_evacuation_space.geojson';
-    var promise = Cesium.GeoJsonDataSource.load(hakone, {fill: new Cesium.Color(0, 0, 1, 0.9)});
-    var hinanjyo = viewer.dataSources.add(promise);
+
 
     // PLATEAU-Orthoの参照
     var imageProvider = new Cesium.UrlTemplateImageryProvider({ url: 'https://gic-plateau.s3.ap-northeast-1.amazonaws.com/2020/ortho/tiles/{z}/{x}/{y}.png', maximumLevel : 19});
@@ -64,11 +62,22 @@
      var sugata_l1_max_3d_tiles = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
       url : 'https://plateau.geospatial.jp/main/data/3d-tiles/fld/09201_utsunomiya/texture_pref/sugatagawa_l2/tileset.json'
     }));   
-    // カメラの初期位置の指定 宇都宮駅を中心に
-    viewer.camera.setView({
-      destination : Cesium.Cartesian3.fromDegrees(139.8984874, 36.5594802, 2000.0)　// 
-    });
     // 避難所
+    var path = 'data/092011_evacuation_space.geojson';
+    var promise = Cesium.GeoJsonDataSource.load(path, {fill: new Cesium.Color(0, 1, 1, 0.9)});
+    var hinanjyo = viewer.dataSources.add(promise);
+    // カメラの初期位置の指定 宇都宮駅を中心に
+    // viewer.camera.setView({
+    //   destination : Cesium.Cartesian3.fromDegrees(139.8984874, 36.5594802, 2000.0)// 
+    // });
+    viewer.camera.setView({
+      destination : Cesium.Cartesian3.fromDegrees(139.8984874, 36.535, 2000.0), // 设置位置
+      orientation: {
+        heading : Cesium.Math.toRadians(0.0), // 方向
+        pitch : Cesium.Math.toRadians(-45.0),// 倾斜角度
+        roll : Cesium.Math.toRadians(0.0)}
+      });
+
 
   </script>
 </body>
